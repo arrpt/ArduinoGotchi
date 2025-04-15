@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
- #include <avr/pgmspace.h>
+#include <avr/pgmspace.h>
 #include "cpu.h"
 #include "hw.h"
 #include "hal.h"
@@ -835,7 +835,8 @@ static void op_retd_cb(u8_t arg0, u8_t arg1)
   sp = (sp + 3) & 0xFF;
   SET_M(x, arg0 & 0xF);
   SET_M(x + 1, (arg0 >> 4) & 0xF);
-  x = (x + 2) & 0xFFF;
+  //x = (x + 2) & 0xFFF;
+  x = ((x + 2) & 0xFF) | (XP << 8)
   call_depth--;
 }
 
@@ -854,12 +855,14 @@ static void op_halt_cb(u8_t arg0, u8_t arg1)
 
 static void op_inc_x_cb(u8_t arg0, u8_t arg1)
 {
-  x = (x + 1) & 0xFFF;
+  //x = (x + 1) & 0xFFF;
+  x = ((x + 1) & 0xFF) | (XP << 8)
 }
 
 static void op_inc_y_cb(u8_t arg0, u8_t arg1)
 {
-  y = (y + 1) & 0xFFF;
+  //y = (y + 1) & 0xFFF;
+  y = ((y + 1) & 0xFF) | (YP << 8);
 }
 
 static void op_ld_x_cb(u8_t arg0, u8_t arg1)
@@ -1035,26 +1038,30 @@ static void op_ldpx_mx_cb(u8_t arg0, u8_t arg1)
 static void op_ldpx_r_cb(u8_t arg0, u8_t arg1)
 {
   SET_RQ(arg0, RQ(arg1));
-  x = (x + 1) & 0xFFF;
+  //x = (x + 1) & 0xFFF;
+  x = ((x + 1) & 0xFF) | (XP << 8);
 }
 
 static void op_ldpy_my_cb(u8_t arg0, u8_t arg1)
 {
   SET_M(y, arg0);
-  y = (y + 1) & 0xFFF;
+  //y = (y + 1) & 0xFFF;
+  y = ((y + 1) & 0xFF) | (YP << 8);
 }
 
 static void op_ldpy_r_cb(u8_t arg0, u8_t arg1)
 {
   SET_RQ(arg0, RQ(arg1));
-  y = (y + 1) & 0xFFF;
+  //y = (y + 1) & 0xFFF;
+  y = ((y + 1) & 0xFF) | (YP << 8);
 }
 
 static void op_lbpx_cb(u8_t arg0, u8_t arg1)
 {
   SET_M(x, arg0 & 0xF);
   SET_M(x + 1, (arg0 >> 4) & 0xF);
-  x = (x + 2) & 0xFFF;
+  //x = (x + 2) & 0xFFF;
+  x = ((x + 2) & 0xFF) | (XP << 8);
 }
 
 static void op_set_cb(u8_t arg0, u8_t arg1)
@@ -1483,7 +1490,8 @@ static void op_acpx_cb(u8_t arg0, u8_t arg1)
     if (tmp >> 4) { SET_C(); } else { CLEAR_C(); }
   }
   if (!M(x)) { SET_Z(); } else { CLEAR_Z(); }
-  x = (x + 1) & 0xFFF;
+  //x = (x + 1) & 0xFFF;
+  x = ((x + 1) & 0xFF) | (XP << 8);
 }
 
 static void op_acpy_cb(u8_t arg0, u8_t arg1)
@@ -1504,7 +1512,8 @@ static void op_acpy_cb(u8_t arg0, u8_t arg1)
     if (tmp >> 4) { SET_C(); } else { CLEAR_C(); }
   }
   if (!M(y)) { SET_Z(); } else { CLEAR_Z(); }
-  y = (y + 1) & 0xFFF;
+  //y = (y + 1) & 0xFFF;
+  y = ((y + 1) & 0xFF) | (YP << 8);
 }
 
 static void op_scpx_cb(u8_t arg0, u8_t arg1)
@@ -1523,7 +1532,8 @@ static void op_scpx_cb(u8_t arg0, u8_t arg1)
   }
   if (tmp >> 4) { SET_C(); } else { CLEAR_C(); }
   if (!M(x)) { SET_Z(); } else { CLEAR_Z(); }
-  x = (x + 1) & 0xFFF;
+  //x = (x + 1) & 0xFFF;
+  x = ((x + 1) & 0xFF) | (XP << 8);
 }
 
 static void op_scpy_cb(u8_t arg0, u8_t arg1)
@@ -1542,7 +1552,8 @@ static void op_scpy_cb(u8_t arg0, u8_t arg1)
   }
   if (tmp >> 4) { SET_C(); } else { CLEAR_C(); }
   if (!M(y)) { SET_Z(); } else { CLEAR_Z(); }
-  y = (y + 1) & 0xFFF;
+  //y = (y + 1) & 0xFFF;
+  y = ((y + 1) & 0xFF) | (YP << 8);
 }
 
 static void op_not_cb(u8_t arg0, u8_t arg1)
@@ -1633,7 +1644,7 @@ static const op_t0 ops0[] PROGMEM = {
   {0xFF4, MASK_10B      , 5 }, // LD_R_SPL
   {0xC00, MASK_6B   , 7 }, // ADD_R_I
   {0xC40, MASK_6B   , 7 }, // ADC_R_I
-  {0xB40, MASK_6B   , 7 }, // SBC_R_I
+  {0xD40, MASK_6B   , 7 }, // SBC_R_I
   {0xC80, MASK_6B   , 7 }, // AND_R_I
   {0xCC0, MASK_6B   , 7 }, // OR_R_I
   {0xD00, MASK_6B   , 7 }, // XOR_R_I

@@ -836,7 +836,7 @@ static void op_retd_cb(u8_t arg0, u8_t arg1)
   SET_M(x, arg0 & 0xF);
   SET_M(x + 1, (arg0 >> 4) & 0xF);
   //x = (x + 2) & 0xFFF;
-  x = ((x + 2) & 0xFF) | (XP << 8)
+  x = ((x + 2) & 0xFF) | (XP << 8);
   call_depth--;
 }
 
@@ -856,7 +856,7 @@ static void op_halt_cb(u8_t arg0, u8_t arg1)
 static void op_inc_x_cb(u8_t arg0, u8_t arg1)
 {
   //x = (x + 1) & 0xFFF;
-  x = ((x + 1) & 0xFF) | (XP << 8)
+  x = ((x + 1) & 0xFF) | (XP << 8);
 }
 
 static void op_inc_y_cb(u8_t arg0, u8_t arg1)
